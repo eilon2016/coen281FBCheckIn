@@ -1,5 +1,6 @@
 # Exploratory Data Analysis for the FB Check In Training Set
 import numpy
+import seaborn
 import matplotlib
 import matplotlib.pyplot as plt
 import pandas
@@ -32,11 +33,18 @@ def main():
     print(data.describe()) # count, mean, std, min, quartiles, max
 
     # data.boxplot(column='accuracy').plot() # box plot for accuracy
-    #place_id = numpy.log(data['place_id']) # Place_id is our class/label; it contains a wide range of counts
+    place_id = data['place_id'] # Place_id is our class/label; it contains a wide range of counts
     #place_id.hist(bins=50).plot()
-    place_id_freq = data['place_id'].value_counts()
-    place_id_freq.hist(bins=100).plot()
-    plt.show() # show our plots
+    place_id_freq = place_id.value_counts()
+    # Generates a histogram: x axis is the number of check-ins, y is how many place_ids have that number of check-ins
+    print("     place_id_freq")
+    print(place_id_freq.describe())
+    plt.figure() # Make a new figure
+    plt.hist(place_id_freq.values, bins='fd') # Histogram of the counts
+    plt.xticks(numpy.arange(0, 1900, 100))
+    plt.xlabel("Number of Check-ins")
+    plt.ylabel("Number of place_ids")
+    plt.savefig('Figures/Check_in_count.png')
 
 
 if __name__ == "__main__":
