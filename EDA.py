@@ -16,20 +16,24 @@ time            Time of check in        [1, 786239]
 place_id        Check in location
 """
 
+def loadData(dir, fileName):
+    dataPath = dir + "/" + fileName + ".csv"
+    picklePath = dir + "/" + fileName + ".pkl"
+    # Using pickle allows for faster subsequent runs
+    if not os.path.isfile(picklePath):
+        data = pandas.read_csv(dataPath)
+        data.to_pickle(picklePath)
+    else:
+        data = pandas.read_pickle(picklePath)
+    return data
+
 def main():
     f = open('output.txt', 'w') # Output file
     pandas.set_option('display.float_format', lambda x: '%.3f' % x) # up to 3 decimal places
     matplotlib.interactive(False)
 
-    dataPath = "/Users/Johnny/Documents/FBData/train.csv"
-    picklePath = "/Users/Johnny/Documents/FBData/train.pkl"
-
-    # Read data set using pandas
-    if not os.path.isfile(picklePath):
-        data = pandas.read_csv(dataPath)
-        data.to_pickle(picklePath)
-    else:
-        data = pandas.read_pickle(picklePath) # Using pickle allows for faster subsequent runs
+    # Load our data
+    data = loadData("/Users/Johnny/Documents/FBData", "train")
 
     # Get initial description of data: count, mean, std, min, quartiles, max
     s = data.describe().to_string()
@@ -51,6 +55,7 @@ def main():
     plt.xlabel("Number of Check-ins")
     plt.ylabel("Number of place_ids")
     plt.savefig('Figures/Check_in_count.png')
+
 
 
     f.close() # Close output.txt
