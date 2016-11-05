@@ -6,19 +6,20 @@ from sklearn.cross_validation import KFold
 from sklearn import metrics
 
 
-def classification_model(model, data, predictors, outcome):
+
+def classification_model(model, data, predictors, label):
 
     fileName = "Results/results_" + str(datetime.datetime.now())
     f = open(fileName + ".txt", 'w')
 
     # Fit the model:
-    model.fit(data[predictors], data[outcome])
+    model.fit(data[predictors], data[label])
 
     # Make predictions on training set:
     predictions = model.predict(data[predictors])
 
     # Print accuracy
-    accuracy = metrics.accuracy_score(predictions, data[outcome])
+    accuracy = metrics.accuracy_score(predictions, data[label])
     print("Accuracy : %s" % "{0:.3%}".format(accuracy))
     f.write("Accuracy : %s" % "{0:.3%}".format(accuracy))
 
@@ -30,28 +31,27 @@ def classification_model(model, data, predictors, outcome):
         train_predictors = (data[predictors].iloc[train, :])
 
         # The target we're using to train the algorithm.
-        train_target = data[outcome].iloc[train]
+        train_target = data[label].iloc[train]
 
         # Training the algorithm using the predictors and target.
         model.fit(train_predictors, train_target)
 
         # Record error from each cross-validation run
-        error.append(model.score(data[predictors].iloc[test, :], data[outcome].iloc[test]))
+        error.append(model.score(data[predictors].iloc[test, :], data[label].iloc[test]))
 
     print("Cross-Validation Score : %s" % "{0:.3%}".format(numpy.mean(error)))
     f.write("\nCross-Validation Score : %s" % "{0:.3%}".format(numpy.mean(error)))
 
     # Fit the model again so that it can be referred outside the function:
-    model.fit(data[predictors], data[outcome])
+    model.fit(data[predictors], data[label])
 
     f.close()
 
 def main():
-    kNN = KNeighborsClassifier()
-    data = EDA.loadData("Data/", "resampled")
-    classification_model(model=kNN, data=data, predictors=['x','y'], outcome='place_id')
-
-
+    # Default k = 5
+    kNN = KNeighborsClassifier(n_jobs=-1)
+    training = EDA.loadData("Data/", "resampled")
+    classification_model(model=kNN, data=training, predictors=['x','y','accuracy','time'], label='place_id')
 
 if __name__ == "__main__":
     main()

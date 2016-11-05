@@ -1,0 +1,2 @@
+Accuracy : 54.044%
+Cross-Validation Score : 24.646%
